@@ -2,7 +2,7 @@ import nodemailer  from 'nodemailer';
 import { Request,Response } from "express";
 import { prisma } from "../prisma/client";
 import { StatusCodes } from "http-status-codes";
-
+import variable from '../variable';
 export const borrowBook = async (req:Request, res:Response) =>{
     try {
         const {livreID,userID} = req.body;
@@ -59,13 +59,13 @@ const sendNotification = async (userEmail:string,message:string) =>{
     const transporter = nodemailer.createTransport({
         service:"gmail",
         auth:{
-            user:process.env.EMAIL_USER || 'dimitritedom@gmail.com',
-            pass:process.env.EMAIL_PASS || 'klanoshi5',
+            user:variable.EMAIL_USER,
+            pass:variable.EMAIL_PASS,
         }
     });
 
     await transporter.sendMail({
-        from:process.env.EMAIL_USER,
+        from:variable.EMAIL_USER,
         to:userEmail,
         subject: "Notification de disponibilité de livre",
         text:message,

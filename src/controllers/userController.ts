@@ -4,6 +4,7 @@ import {Request,Response} from 'express';
 import { registerUser } from '../services/userService';
 import { prisma } from '../prisma/client';
 import { StatusCodes} from 'http-status-codes';
+import variable from '../variable';
 
 export const signupUser = async (req:Request,res:Response) =>{ 
     const {nom,email,motDePasse} = req.body;
@@ -24,7 +25,7 @@ export const signupUser = async (req:Request,res:Response) =>{
     }
 }
  
-const JWT_SECRET = process.env.JWT_SECRET || 'johanna';
+const JWT_SECRET = variable.JWT_SECRET;
 
 export const loginUser = async (req: Request, res: Response): Promise<void> => {
     const { email, motDePasse } = req.body;

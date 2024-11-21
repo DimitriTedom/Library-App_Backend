@@ -2,9 +2,9 @@ import app from "./app";
 import {prisma} from './prisma/client';
 import cron from "node-cron";
 import {sendReminders} from './jobs/reminderJob'
-require('dotenv').config();
+import variable from "./variable";
 
-const PORT = process.env.PORT || 3000;
+const PORT = variable.PORT;
 
 (async ()=>{
     try {
