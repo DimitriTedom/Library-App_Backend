@@ -148,10 +148,10 @@ Cette API REST permet de gérer une bibliothèque en ligne avec les fonctionnali
   [
     {
       "id": "unique-book-id",
-      "titre": "Book Title",
-      "auteur": "Author Name",
+      "title": "Book Title",
+      "author": "Author Name",
       "description": "Book Description",
-      "anneePublication": 2023,
+      "publishYear": 2023,
       "ISBN": "123456789",
       "etat": "disponible"
     }
@@ -163,10 +163,10 @@ Cette API REST permet de gérer une bibliothèque en ligne avec les fonctionnali
 - **Body** :
   ```json
   {
-    "titre": "New Book",
-    "auteur": "Author Name",
+    "title": "New Book",
+    "author": "Author Name",
     "description": "Book Description",
-    "anneePublication": 2023,
+    "publishYear": 2023,
     "ISBN": "987654321"
   }
   ```
@@ -176,7 +176,7 @@ Cette API REST permet de gérer une bibliothèque en ligne avec les fonctionnali
     "message": "Livre ajouté avec succès",
     "book": {
       "id": "unique-book-id",
-      "titre": "New Book"
+      "title": "New Book"
     }
   }
   ```
@@ -186,12 +186,12 @@ Cette API REST permet de gérer une bibliothèque en ligne avec les fonctionnali
 ### 3. **Gestion des emprunts**
 
 #### A. Emprunter un livre
-- **Endpoint** : `POST /loans`
+- **Endpoint** : `POST /borrows`
 - **Body** :
   ```json
   {
     "livreID": "unique-book-id",
-    "utilisateurID": "unique-user-id"
+    "userID": "unique-user-id"
   }
   ```
 - **Résultat attendu** :
@@ -209,7 +209,7 @@ Cette API REST permet de gérer une bibliothèque en ligne avec les fonctionnali
 
 #### B. Retourner un livre
 - **Endpoint** : `PUT /loans/:id/return`
-- **Exemple d’URL** : `http://localhost:3000/loans/unique-borrow-id/return`
+- **Exemple d’URL** : `http://localhost:3000/borrows/unique-borrow-id/return`
 - **Résultat attendu** :
   ```json
   {
@@ -223,7 +223,7 @@ Cette API REST permet de gérer une bibliothèque en ligne avec les fonctionnali
 
 #### C. Consulter l’historique des emprunts
 - **Endpoint** : `GET /loans/user/:userID`
-- **Exemple d’URL** : `http://localhost:3000/loans/user/unique-user-id`
+- **Exemple d’URL** : `http://localhost:3000/borrows/user/unique-user-id`
 - **Résultat attendu** :
   ```json
   [
@@ -231,7 +231,7 @@ Cette API REST permet de gérer une bibliothèque en ligne avec les fonctionnali
       "id": "unique-borrow-id",
       "livre": {
         "id": "unique-book-id",
-        "titre": "Book Title"
+        "title": "Book Title"
       },
       "dateEmprunt": "2023-11-14T10:00:00.000Z",
       "dateRetour": null
