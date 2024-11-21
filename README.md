@@ -1,213 +1,260 @@
-# Online Library API
+# Library API - Documentation
 
-## 📚 Description
-
-Cette API REST permet de gérer une bibliothèque en ligne. Les fonctionnalités incluent :
-- Gestion des utilisateurs : inscription, connexion, mise à jour de profil, suppression de compte.
-- Gestion des livres : ajout, mise à jour, suppression et consultation de livres.
-- Gestion des emprunts et notifications (à implémenter).
-
-### 🛠️ Stack Technique
-- **Backend** : Node.js + Express.js
-- **Langage** : TypeScript
-- **Base de données** : MongoDB avec Prisma ORM
-- **Versionnement** : Git + GitHub
+## Description
+Cette API REST permet de gérer une bibliothèque en ligne avec les fonctionnalités suivantes :
+- Gestion des utilisateurs (inscription, connexion, gestion du profil).
+- Gestion des livres (consultation, ajout, mise à jour, suppression).
+- Gestion des emprunts de livres (emprunter, retourner, historique).
+- Notifications (disponibilité des livres et rappels de retour).
 
 ---
 
-## 🚀 Fonctionnalités
-
-### Utilisateurs
-- **Inscription** : Créer un compte utilisateur.
-- **Connexion** : Authentifier un utilisateur et générer un token JWT.
-- **Déconnexion** : Invalider le token JWT.
-- **Profil** : Consulter, mettre à jour et supprimer le compte utilisateur.
-
-### Livres
-- **Liste des livres** : Récupérer tous les livres disponibles.
-- **Ajout d'un livre** : Ajouter un nouveau livre à la bibliothèque.
-- **Mise à jour d'un livre** : Modifier les informations d'un livre existant.
-- **Suppression d'un livre** : Supprimer un livre de la bibliothèque.
+## Prérequis
+- **Node.js** (version 16 ou supérieure)
+- **npm** ou **yarn**
+- **MongoDB** (cluster configuré dans `.env`)
+- Outil pour tester les requêtes HTTP, comme **Postman** ou **cURL**.
 
 ---
 
-## 📂 Arborescence du Projet
+## Installation
 
-```
-library-api/
-├── prisma/
-│   ├── schema.prisma    # Schéma Prisma pour la base de données
-├── src/
-│   ├── controllers/     # Logique métier pour chaque ressource
-│   │   ├── userController.ts
-│   │   ├── bookController.ts
-│   ├── routes/          # Définition des routes de l'API
-│   │   ├── userRoutes.ts
-│   │   ├── bookRoutes.ts
-│   ├── prismaClient.ts  # Configuration Prisma
-│   ├── server.ts        # Point d'entrée principal
-├── .env                 # Variables d'environnement (base de données)
-├── package.json         # Dépendances et scripts
-├── tsconfig.json        # Configuration TypeScript
-├── README.md            # Documentation du projet
-```
-
----
-
-## 🖥️ Prérequis
-
-- **Node.js** : [Télécharger ici](https://nodejs.org/)
-- **MongoDB** : [Installer MongoDB](https://www.mongodb.com/docs/manual/installation/)
-- **Postman** : [Télécharger ici](https://www.postman.com/downloads/)
-- **Prisma CLI** : Installer via `npm install prisma --save-dev`
-- **Git** : [Installer Git](https://git-scm.com/)
-
----
-
-## ⚙️ Installation
-
-1. **Cloner le projet** :
+1. Clonez le projet :
    ```bash
-   git clone https://github.com/<votre-utilisateur>/library-api.git
-   cd library-api
+   git clone https://github.com/DimitriTedom/Library-App_Backend.git
+   cd Library-App_Backend
    ```
 
-2. **Installer les dépendances** :
+2. Installez les dépendances :
    ```bash
    npm install
    ```
 
-3. **Configurer les variables d'environnement** :
-   Créez un fichier `.env` à la racine du projet :
+3. Configurez les variables d'environnement :
+   Créez un fichier `.env` dans le répertoire racine et ajoutez-y les lignes suivantes :
    ```env
-   DATABASE_URL=mongodb+srv://<username>:<password>@cluster0.mongodb.net/<database>
-   JWT_SECRET=your_jwt_secret
+   DATABASE_URL="mongodb+srv://username:password@cluster0.66ckt.mongodb.net/db_name?retryWrites=true&w=majority"
+   EMAIL_USER="youremail@example.com"
+   EMAIL_PASS="yourPassword"
+   PORT=3000
+   JWT_SECRET="yourJwtSecret"
    ```
 
-4. **Configurer Prisma** :
-   - Générer le client Prisma :
-     ```bash
-     npx prisma generate
-     ```
-
-5. **Lancer le projet** :
+4. Initialisez la base de données :
    ```bash
-   npx ts-node src/server.ts
+   npx prisma db push
+   npx prisma generate
+   ```
+   puis, ajoutez votre adrees IP au "service acces" dans Mongo
+
+5. Démarrez le serveur :
+   ```bash
+   npx nodemon src/server.ts
    ```
 
+6. Le serveur sera accessible sur `http://localhost:3000`.
+
 ---
 
-## 🧪 Tests des Endpoints
+## Tester les fonctionnalités avec Postman
 
-### Utilisez **Postman** ou un autre client HTTP pour tester les endpoints.
+### 1. **Gestion des utilisateurs**
 
-#### 1. **Gestion des Utilisateurs**
-- **Inscription** : `POST /users/signup`
-  - Corps :
-    ```json
-    {
+#### A. Inscription
+- **Endpoint** : `POST /users/signup`
+- **Body** :
+  ```json
+  {
+    "nom": "John Doe",
+    "email": "john.doe@example.com",
+    "motDePasse": "password123"
+  }
+  ```
+- **Résultat attendu** :
+  ```json
+  {
+    "message": "Utilisateur créé avec succès",
+    "user": {
+      "id": "unique-user-id",
       "nom": "John Doe",
-      "email": "john.doe@example.com",
-      "motDePasse": "password123"
+      "email": "john.doe@example.com"
     }
-    ```
-- **Connexion** : `POST /users/login`
-  - Corps :
-    ```json
-    {
-      "email": "john.doe@example.com",
-      "motDePasse": "password123"
-    }
-    ```
-- **Profil** : `GET /users/profile` (avec token JWT dans l'en-tête `Authorization`).
+  }
+  ```
 
-#### 2. **Gestion des Livres**
+#### B. Connexion
+- **Endpoint** : `POST /users/login`
+- **Body** :
+  ```json
+  {
+    "email": "john.doe@example.com",
+    "motDePasse": "password123"
+  }
+  ```
+- **Résultat attendu** :
+  ```json
+  {
+    "message": "Connexion réussie",
+    "token": "jwt-token"
+  }
+  ```
+- Copiez le **token** pour les requêtes protégées.
 
-- **Liste des livres** : `GET /books`.
-  - Aucune donnée requise. Retourne une liste de livres au format suivant :
-    ```json
-    [
-      {
-        "id": "123456789",
-        "titre": "1984",
-        "auteur": "George Orwell",
-        "description": "Un roman dystopique",
-        "anneePublication": 1949,
-        "ISBN": "123456789"
-      }
-    ]
-    ```
+#### C. Consulter le profil
+- **Endpoint** : `GET /users/profile`
+- **Headers** :
+  - `Authorization`: `Bearer <jwt-token>`
+- **Résultat attendu** :
+  ```json
+  {
+    "id": "unique-user-id",
+    "nom": "John Doe",
+    "email": "john.doe@example.com"
+  }
+  ```
 
-- **Ajout d’un livre** : `POST /books`.
-  - Corps :
-    ```json
-    {
-      "titre": "1984",
-      "auteur": "George Orwell",
-      "description": "Un roman dystopique",
-      "anneePublication": 1949,
-      "ISBN": "123456789"
+#### D. Mettre à jour le profil
+- **Endpoint** : `PUT /users/profile`
+- **Headers** :
+  - `Authorization`: `Bearer <jwt-token>`
+- **Body** :
+  ```json
+  {
+    "nom": "John Smith",
+    "email": "john.smith@example.com",
+    "motDePasse": "newpassword123"
+  }
+  ```
+- **Résultat attendu** :
+  ```json
+  {
+    "message": "Profil mis à jour avec succès",
+    "user": {
+      "id": "unique-user-id",
+      "nom": "John Smith",
+      "email": "john.smith@example.com"
     }
-    ```
-  - Réponse :
-    ```json
-    {
-      "message": "Livre ajouté avec succès",
-      "book": {
-        "id": "123456789",
-        "titre": "1984",
-        "auteur": "George Orwell",
-        "description": "Un roman dystopique",
-        "anneePublication": 1949,
-        "ISBN": "123456789"
-      }
-    }
-    ```
-
-- **Mise à jour d’un livre** : `PUT /books/:id`.
-  - Exemple d’ID : `/books/123456789`.
-  - Corps (données à mettre à jour) :
-    ```json
-    {
-      "titre": "1984 - Nouvelle Édition",
-      "description": "Mise à jour de la description."
-    }
-    ```
-  - Réponse :
-    ```json
-    {
-      "message": "Livre mis à jour avec succès",
-      "book": {
-        "id": "123456789",
-        "titre": "1984 - Nouvelle Édition",
-        "auteur": "George Orwell",
-        "description": "Mise à jour de la description.",
-        "anneePublication": 1949,
-        "ISBN": "123456789"
-      }
-    }
-    ```
-
-- **Suppression d’un livre** : `DELETE /books/:id`.
-  - Exemple d’ID : `/books/123456789`.
-  - Réponse :
-    ```json
-    {
-      "message": "Livre supprimé avec succès"
-    }
-    ```
+  }
+  ```
 
 ---
 
-## 📖 Documentation
+### 2. **Gestion des livres**
 
-- **Prisma** : [https://www.prisma.io/docs/](https://www.prisma.io/docs/)
-- **Express** : [https://expressjs.com/](https://expressjs.com/)
-- **JWT** : [https://jwt.io/](https://jwt.io/)
+#### A. Consulter les livres
+- **Endpoint** : `GET /books`
+- **Résultat attendu** :
+  ```json
+  [
+    {
+      "id": "unique-book-id",
+      "titre": "Book Title",
+      "auteur": "Author Name",
+      "description": "Book Description",
+      "anneePublication": 2023,
+      "ISBN": "123456789",
+      "etat": "disponible"
+    }
+  ]
+  ```
+
+#### B. Ajouter un livre
+- **Endpoint** : `POST /books`
+- **Body** :
+  ```json
+  {
+    "titre": "New Book",
+    "auteur": "Author Name",
+    "description": "Book Description",
+    "anneePublication": 2023,
+    "ISBN": "987654321"
+  }
+  ```
+- **Résultat attendu** :
+  ```json
+  {
+    "message": "Livre ajouté avec succès",
+    "book": {
+      "id": "unique-book-id",
+      "titre": "New Book"
+    }
+  }
+  ```
 
 ---
 
-## 📝 Auteur
+### 3. **Gestion des emprunts**
 
-Créé par Dimitri Tedom alias [SnowDev](https://github.com/DimitriTedom). Contactez-moi à [dimitritedom@gmail.com](mailto:dimitritedom@gmail.com) pour toute question !
+#### A. Emprunter un livre
+- **Endpoint** : `POST /loans`
+- **Body** :
+  ```json
+  {
+    "livreID": "unique-book-id",
+    "utilisateurID": "unique-user-id"
+  }
+  ```
+- **Résultat attendu** :
+  ```json
+  {
+    "message": "Livre emprunté avec succès",
+    "borrow": {
+      "id": "unique-borrow-id",
+      "livreID": "unique-book-id",
+      "userID": "unique-user-id",
+      "dateEmprunt": "2023-11-15T10:00:00.000Z"
+    }
+  }
+  ```
+
+#### B. Retourner un livre
+- **Endpoint** : `PUT /loans/:id/return`
+- **Exemple d’URL** : `http://localhost:3000/loans/unique-borrow-id/return`
+- **Résultat attendu** :
+  ```json
+  {
+    "message": "Livre retourné avec succès et Notifications envoyées.",
+    "borrow": {
+      "id": "unique-borrow-id",
+      "dateRetour": "2023-11-15T12:00:00.000Z"
+    }
+  }
+  ```
+
+#### C. Consulter l’historique des emprunts
+- **Endpoint** : `GET /loans/user/:userID`
+- **Exemple d’URL** : `http://localhost:3000/loans/user/unique-user-id`
+- **Résultat attendu** :
+  ```json
+  [
+    {
+      "id": "unique-borrow-id",
+      "livre": {
+        "id": "unique-book-id",
+        "titre": "Book Title"
+      },
+      "dateEmprunt": "2023-11-14T10:00:00.000Z",
+      "dateRetour": null
+    }
+  ]
+  ```
+
 ---
+
+### 4. **Notifications**
+
+#### A. Notification de disponibilité
+- Lorsqu’un livre est retourné, une notification est automatiquement envoyée par email aux utilisateurs qui ont réservé ce livre.
+
+#### B. Rappel de date de retour
+- Les rappels pour les dates de retour sont envoyés automatiquement par le système. Configurez un script CRON ou une fonction planifiée pour exécuter ces tâches.
+
+---
+
+## Déploiement
+- Backend : Utilisez une plateforme comme **Render**, **Railway** ou **Heroku**.
+- Frontend : Déployez avec **Netlify** ou **Vercel** et connectez-le à l’API déployée.(En cours de programmation)
+
+## Contributeurs
+
+[DimitriTedom @SnowDev](https://github.com/DimitriTedom)
