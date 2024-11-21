@@ -1,7 +1,3 @@
-
----
-
-```markdown
 # Online Library API
 
 ## 📚 Description
