@@ -110,6 +110,6 @@
     "rootDir": "./src"
     
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "src/variable.ts"],
   "exclude": ["node_modules"]
 }
